@@ -1,4 +1,6 @@
 body{
     background-color: white;
     color: black !important;
+    height: 100vh;
+    width: 100vw;
 }
