@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "nodemon index.ts",
     "build": "tsc",
-    "serve": "node dist/index.js"
+    "dev": "ts-node-dev --respawn --transpile-only index.ts",
+    "add:sampledata":"npx ts-node src/sampleData/populateDb.ts"
   },
   "keywords": [],
   "author": "",
@@ -14,8 +15,12 @@
   "dependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^22.13.16",
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-serve-static-core": "^0.1.1",
+    "mongoose": "^8.13.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   },
