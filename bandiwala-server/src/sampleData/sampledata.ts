@@ -1,24 +1,36 @@
-interface User {
+interface Admin {
   username: string;
-  name: string;
   email: string;
   password: string;
-  phone: string;
+  role: 'super_admin' | 'admin';
+  permissions: string[];
+}
+
+interface User {
+  username: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
   address: string;
-  cart: any[];
+  cart: Array<{ productId: string; quantity: number }>;
 }
 
 interface Vendor {
   name: string;
   email: string;
   password: string;
-  phone: string;
+  phoneNumber: string;
   description: string;
   location: {
     city: string;
     latitude: number;
     longitude: number;
   };
+  isVerified: boolean;
+  ratings: Array<{
+    rating: number;
+    review: string;
+  }>;
 }
 
 interface Product {
@@ -28,35 +40,49 @@ interface Product {
   category: string;
   imageUrl: string;
   vendorId: string;
-  ratings: {
+  ratings: Array<{
     rating: number;
-    comment: string;
-  }[];
+    review: string;
+  }>;
 }
 
 interface CarouselItem {
-  title: string;
-  description: string;
   image: string;
+  productId: string;
   active: boolean;
 }
+
+export const sampleAdmins: Admin[] = [
+  {
+    username: "superadmin",
+    email: "superadmin@bandiwala.com",
+    password: "admin123",
+    role: "super_admin",
+    permissions: ["all"]
+  },
+  {
+    username: "admin1",
+    email: "admin1@bandiwala.com",
+    password: "admin456",
+    role: "admin",
+    permissions: ["manage_vendors", "manage_products"]
+  }
+];
 
 export const sampleUsers: User[] = [
   {
     username: "johndoe",
-    name: "John Doe",
     email: "john@example.com",
     password: "password123",
-    phone: "+1234567890",
+    phoneNumber: "+1234567890",
     address: "123 Main St, City",
     cart: []
   },
   {
     username: "janesmith",
-    name: "Jane Smith",
     email: "jane@example.com",
     password: "password456",
-    phone: "+1987654321",
+    phoneNumber: "+1987654321",
     address: "456 Oak Ave, Town",
     cart: []
   }
@@ -67,25 +93,29 @@ export const sampleVendors: Vendor[] = [
     name: "Fresh Fruits Co",
     email: "fruits@example.com",
     password: "vendor123",
-    phone: "+1122334455",
+    phoneNumber: "+1122334455",
     description: "Fresh fruits delivered to your doorstep",
     location: {
       city: "Mumbai",
       latitude: 19.0760,
       longitude: 72.8777
-    }
+    },
+    isVerified: true,
+    ratings: []
   },
   {
     name: "Vegetable Express",
     email: "veggies@example.com",
     password: "vendor456",
-    phone: "+5544332211",
+    phoneNumber: "+5544332211",
     description: "Local farm fresh vegetables",
     location: {
       city: "Delhi",
       latitude: 28.6139,
       longitude: 77.2090
-    }
+    },
+    isVerified: false,
+    ratings: []
   }
 ];
 
@@ -97,12 +127,7 @@ export const sampleProducts: Product[] = [
     category: "Fruits",
     imageUrl: "https://example.com/images/apples.jpg",
     vendorId: "", // Will be replaced with actual vendor ID during population
-    ratings: [
-      {
-        rating: 5,
-        comment: "Very fresh and sweet!"
-      }
-    ]
+    ratings: []
   },
   {
     name: "Organic Tomatoes",
@@ -117,15 +142,13 @@ export const sampleProducts: Product[] = [
 
 export const sampleCarouselItems: CarouselItem[] = [
   {
-    title: "Summer Fruits Special",
-    description: "Get fresh summer fruits at 20% off",
     image: "https://example.com/images/summer-fruits.jpg",
+    productId: "", // Will be replaced with actual product ID during population
     active: true
   },
   {
-    title: "Vegetable Bundle",
-    description: "Weekly vegetable bundle at amazing prices",
     image: "https://example.com/images/veggie-bundle.jpg",
+    productId: "", // Will be replaced with actual product ID during population
     active: true
   }
 ];

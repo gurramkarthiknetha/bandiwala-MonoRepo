@@ -4,7 +4,8 @@ import User from '../models/users';
 import Vendor from '../models/vendor';
 import Product from '../models/products';
 import Carousel from '../models/curousel';
-import { sampleUsers, sampleVendors, sampleProducts, sampleCarouselItems } from './sampledata';
+import Admin from '../models/admin';
+import { sampleUsers, sampleVendors, sampleProducts, sampleCarouselItems, sampleAdmins } from './sampledata';
 
 dotenv.config();
 
@@ -18,6 +19,11 @@ const populateDb = async () => {
     await Vendor.deleteMany({});
     await Product.deleteMany({});
     await Carousel.deleteMany({});
+    await Admin.deleteMany({});
+
+    // Insert sample admins
+    const admins = await Admin.insertMany(sampleAdmins);
+    console.log('Sample admins added');
 
     // Insert sample users
     const users = await User.insertMany(sampleUsers);
@@ -27,13 +33,13 @@ const populateDb = async () => {
     const vendors = await Vendor.insertMany(sampleVendors);
     console.log('Sample vendors added');
 
-    // Update product data with real IDs
+    // Update product data with real vendor IDs
     const productsWithRealIds = sampleProducts.map((product, index) => ({
       ...product,
       vendorId: vendors[index % vendors.length]._id,
       ratings: product.ratings.map(rating => ({
         ...rating,
-        userId: users[0]._id // Using the first user for all ratings as an example
+        userId: users[0]._id
       }))
     }));
 

@@ -1,13 +1,14 @@
 import express from 'express';
 import { Request, Response } from 'express-serve-static-core';
 import Vendor from '../models/vendor';
+import Product from '../models/products';
 
 const VendorRouter = express.Router();
 
 // Get all vendors
 VendorRouter.get('/', async (_req: Request, res: Response) => {
   try {
-    const vendors = await Vendor.find().select('-password').populate('products');
+    const vendors = await Vendor.find().select('-password');
     res.json(vendors);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching vendors', error });
@@ -17,9 +18,7 @@ VendorRouter.get('/', async (_req: Request, res: Response) => {
 // Get vendor by ID
 VendorRouter.get('/:id', async (req: Request, res: Response) => {
   try {
-    const vendor = await Vendor.findById(req.params.id)
-      .select('-password')
-      .populate('products');
+    const vendor = await Vendor.findById(req.params.id).select('-password');
     if (!vendor) {
       return res.status(404).json({ message: 'Vendor not found' });
     }
@@ -58,6 +57,23 @@ VendorRouter.put('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// Update vendor profile
+VendorRouter.patch('/:id', async (req: Request, res: Response) => {
+  try {
+    const vendor = await Vendor.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    ).select('-password');
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+    res.json(vendor);
+  } catch (error) {
+    res.status(400).json({ message: 'Error updating vendor', error });
+  }
+});
+
 // Delete vendor
 VendorRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
@@ -80,6 +96,30 @@ VendorRouter.get('/city/:cityName', async (req: Request, res: Response) => {
     res.json(vendors);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching vendors by city', error });
+  }
+});
+
+// Get vendor's products
+VendorRouter.get('/:id/products', async (req: Request, res: Response) => {
+  try {
+    const products = await Product.find({ vendorId: req.params.id });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching products', error });
+  }
+});
+
+// Add new product
+VendorRouter.post('/:id/products', async (req: Request, res: Response) => {
+  try {
+    const newProduct = new Product({
+      ...req.body,
+      vendorId: req.params.id
+    });
+    const savedProduct = await newProduct.save();
+    res.status(201).json(savedProduct);
+  } catch (error) {
+    res.status(400).json({ message: 'Error creating product', error });
   }
 });
 
