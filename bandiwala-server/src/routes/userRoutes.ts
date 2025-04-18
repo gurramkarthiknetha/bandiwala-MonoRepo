@@ -39,18 +39,18 @@ UserRouter.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Update user
-UserRouter.put('/:id', async (req: Request, res: Response) => {
+// Update user profile
+UserRouter.patch('/:id', async (req: Request, res: Response) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: req.body },
       { new: true }
     ).select('-password');
-    if (!updatedUser) {
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(updatedUser);
+    res.json(user);
   } catch (error) {
     res.status(400).json({ message: 'Error updating user', error });
   }
@@ -69,12 +69,12 @@ UserRouter.delete('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// Update cart
+// Add item to cart
 UserRouter.post('/:id/cart', async (req: Request, res: Response) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { $set: { cart: req.body.cart } },
+      { $push: { cart: req.body } },
       { new: true }
     ).select('-password');
     if (!user) {
@@ -82,7 +82,44 @@ UserRouter.post('/:id/cart', async (req: Request, res: Response) => {
     }
     res.json(user);
   } catch (error) {
-    res.status(400).json({ message: 'Error updating cart', error });
+    res.status(400).json({ message: 'Error adding item to cart', error });
+  }
+});
+
+// Update cart item quantity
+UserRouter.patch('/:id/cart/:productId', async (req: Request, res: Response) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { 
+        _id: req.params.id,
+        'cart.productId': req.params.productId 
+      },
+      { $set: { 'cart.$.quantity': req.body.quantity } },
+      { new: true }
+    ).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User or cart item not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ message: 'Error updating cart item', error });
+  }
+});
+
+// Remove item from cart
+UserRouter.delete('/:id/cart/:productId', async (req: Request, res: Response) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { cart: { productId: req.params.productId } } },
+      { new: true }
+    ).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ message: 'Error removing item from cart', error });
   }
 });
 
