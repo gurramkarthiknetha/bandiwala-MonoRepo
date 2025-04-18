@@ -1,3 +1,4 @@
+import 'package:bandiwala/screens/auth/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bandiwala/screens/auth/login_screen.dart';
@@ -19,7 +20,7 @@ class MyApp extends ConsumerWidget {
     final authState = ref.watch(authServiceProvider);
 
     return MaterialApp(
-      title: 'Brndiwale',
+      title: 'Bandiwale',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
@@ -30,7 +31,9 @@ class MyApp extends ConsumerWidget {
         error: (err, stack) => LoginScreen(error: err.toString()),
         data: (user) {
           if (user == null) {
-            return const LoginScreen();
+            // return const LoginScreen();
+            // return AdminDashboard();
+            return const BandiwalaWelcomeScreen();
           }
           return FutureBuilder<String?>(
             future: StorageService.getUserType(),
